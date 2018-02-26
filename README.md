@@ -63,7 +63,7 @@ Here's the conversion table:
 
 
 | **Django**                                       | **EmailHub**                             |
-|==================================================|==========================================|
+|--------------------------------------------------|------------------------------------------|
 | django.core.mail.backends.smtp.EmailBackend      | emailhub.backends.smtp.EmailBackend      |
 | django.core.mail.backends.console.EmailBackend   | emailhub.backends.console.EmailBackend   |
 | django.core.mail.backends.filebased.EmailBackend | emailhub.backends.filebased.EmailBackend |

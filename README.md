@@ -39,7 +39,7 @@ Maximum send retries before giving up.
 EMAILHUB_SEND_MAX_RETRIES = 3
 ```
 
-# EMAILHUB\_SEND\_HTML 
+### EMAILHUB\_SEND\_HTML 
 
 Send also the HTML version with the text version of the email body (multi-parts)
 

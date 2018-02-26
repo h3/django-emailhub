@@ -28,6 +28,8 @@ class EmailMessage(models.Model):
     body_html = models.TextField(_('Body (html)'))
     from_email = models.EmailField(_('From'))
     to_email = models.EmailField(_('To'))
+    date_created = models.DateTimeField(_('Date created'), auto_now_add=True)
+    date_modified = models.DateTimeField(_('Date modified'), auto_now=True)
     date_sent = models.DateTimeField(_('Date sent'), blank=True, null=True)
     is_sent = models.BooleanField(_('Is sent'), default=False, db_index=True)
     is_error = models.BooleanField(_('Is error'), default=False, db_index=True)
@@ -99,4 +101,4 @@ class EmailMessage(models.Model):
     class Meta:
         verbose_name = _('Email message')
         verbose_name_plural = _('Email messages')
-        ordering = ['-created', '-date_sent']
+        ordering = ['-date_created', '-date_sent']

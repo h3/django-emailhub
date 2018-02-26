@@ -7,6 +7,7 @@ import uuid
 import logging
 
 from django.db import models
+from django.utils import six
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
@@ -102,3 +103,31 @@ class EmailMessage(models.Model):
         verbose_name = _('Email message')
         verbose_name_plural = _('Email messages')
         ordering = ['-date_created', '-date_sent']
+
+
+@python_2_unicode_compatible
+class EmailTemplate(models.Model):
+    SIGNATURE_CHOICES = (
+        ('default', _('Default')),
+    )
+    language = models.CharField(_('Language'), max_length=6, default='en',
+                                choices=settings.LANGUAGES)
+    slug = models.SlugField(_('Slug'), max_length=80, blank=False, null=False,
+                            unique=False)
+    subject = models.CharField(_('Subject'), max_length=100)
+    text_content = models.TextField(_('Text content'))
+    html_content = models.TextField(_('HTML content'))
+    email_from = models.EmailField(_('Email from'), blank=True, null=True)
+    is_active = models.BooleanField(_('Is active'), default=True)
+    is_auto_send = models.BooleanField(
+        _('Auto send'), default=False,
+        help_text=_('If checked, email will be sent without going through a "draft" state.'))  # noqa
+    signature = models.CharField(_('Signature'), max_length=100,
+                                 choices=SIGNATURE_CHOICES, default='default')
+
+    def __str__(self):
+        return six.text_type('{} ({})'.format(self.subject, self.language))
+
+    class Meta:
+        verbose_name = _('Email template')
+        verbose_name_plural = _('Email templates')

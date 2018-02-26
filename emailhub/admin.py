@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from emailhub.models import EmailMessage
+from emailhub.models import EmailMessage, EmailTemplate
 
 
 class EmailMessageAdmin(admin.ModelAdmin):
@@ -35,3 +35,29 @@ class EmailMessageAdmin(admin.ModelAdmin):
         }),
     )
 admin.site.register(EmailMessage, EmailMessageAdmin)
+
+
+class EmailTemplateAdmin(admin.ModelAdmin):
+    list_display = (
+        'subject', 'slug', 'language', 'is_active', 'is_auto_send')
+    list_filter = ('language', 'is_auto_send')
+    ordering = ('slug', 'language')
+    search_fields = ('slug', 'subject', 'text_content')
+    fieldsets = (
+        (None, {'fields': (
+            ('subject', 'slug'),
+            ('email_from',),
+            ('language', 'signature', 'is_auto_send'),
+        )}),
+        (_('Text'), {
+            'fields': (
+                'text_content',
+            )
+        }),
+        (_('HTML'), {
+            'fields': (
+                'html_content',
+            )
+        }),
+    )
+admin.site.register(EmailTemplate, EmailTemplateAdmin)

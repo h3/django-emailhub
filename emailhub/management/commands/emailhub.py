@@ -24,6 +24,24 @@ class Command(BaseCommand):
             action='store_true',
             default=False,
             help='Send unsent emails')
+        parser.add_argument(
+            '--status',
+            dest='status',
+            action='store_true',
+            default=False,
+            help='EmailHub system status')
+        parser.add_argument(
+            '--create-template',
+            dest='create_template',
+            action='store_true',
+            default=False,
+            help='Create a new template')
+        parser.add_argument(
+            '--list-templates',
+            dest='list_templates',
+            action='store_true',
+            default=False,
+            help='List templates')
 
     def handle(self, *args, **options):
         if options.get('send'):

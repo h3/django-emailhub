@@ -73,10 +73,28 @@ Here's the conversion table:
 
 ## Management commands
 
-### emailhub
+### emailhub --create-template
+
+```bash
+(venv)$ python manage.py emailhub --create-template
+```
+
+### emailhub --list-templates
+
+```bash
+(venv)$ python manage.py emailhub --list-templates
+```
+
+### emailhub --send
 
 Send unsent emails:
 
 ```bash
 (venv)$ python manage.py emailhub --send
+```
+
+### emailhub --status
+
+```bash
+(venv)$ python manage.py emailhub --status
 ```

@@ -27,7 +27,7 @@ class EmailMessage(models.Model):
     user = models.ForeignKey(User, blank=True, null=True)
     subject = models.TextField(_('Subject'))
     body_text = models.TextField(_('Body (text)'))
-    body_html = models.TextField(_('Body (html)'), blank=True, null=True)
+    body_html = models.TextField(_('Body (HTML)'), blank=True, null=True)
     from_email = models.EmailField(_('From'))
     to_email = models.EmailField(_('To'))
     date_created = models.DateTimeField(_('Date created'), auto_now_add=True)

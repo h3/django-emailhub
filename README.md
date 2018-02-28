@@ -3,8 +3,74 @@
 Django-emailhub tries to go a beyond interpolating variable in a template to
 send the output by email.
 
+**Note**: Work in progress.
+
+
+## Features
+
+### Inboxes
+
+Not actual inboxes, but emails are (optionally) linked to users model.
+
+This makes it possible to build an inbox view for users where they
+can see a copy of all emails sent to them.
+
+This is accomplished in two ways, first when using the EmailHub API:
+
+
+```python
+EmailFromTemplate('welcome-message').send_to(user)
+```
+
+And when using EmailHub's email backends, it will look for user
+emails that matches the destination email and link them.
+
+
+### Batch sending
+
+Sending email right away is rarely a good idea, having a batch sending 
+approach prevents many headaches down the road.
+
+It won't hang your frontend process if the SMTP is slow to respond.
+
+It also allow to have throttling rules to avoid flooing the SMTP.
+
+It also allow to introduce the draft state.
+
+
+### Draft state
+
+The draft mode works somewhat like standard email draft, but with automated
+emails.
+
+When a template email is sent and draft mode is enabled, the email isn't sent
+right away. It is only saved in db where it can be edited and sent at a later
+time.
+
+This allows to create new email templates and review / correct outgoing emails
+before they are actually sent to actual customers.
+
+When the template is stable, draft mode can be disabled and be sent directly.
+
+
+### Email templates
+
+Email templates are can be defined in the admin. They support:
+
+* translations
+* variables (they are actual django templates)
+* preset signatures
+* overriding default send from email
+* allow or block draft mode
+
+
+### Signature templates
+
+Email templates can (or not) use signature templates defined in the admin.
+
 
 ## Settings
+
 
 ### EMAILHUB\_DEFAULT\_FROM 
 
@@ -14,6 +80,7 @@ does not provide a value for it, this setting is used.
 ```python
 EMAILHUB_DEFAULT_FROM = 'no-reply@domain.com'
 ```
+
 
 ### EMAILHUB\_SEND\_BATCH\_SLEEP 
 
@@ -31,6 +98,7 @@ Limit the number of Email objects will be sent
 EMAILHUB_SEND_BATCH_SIZE = 20
 ```
 
+
 ### EMAILHUB\_SEND\_MAX\_RETRIES 
 
 Maximum send retries before giving up.
@@ -38,6 +106,7 @@ Maximum send retries before giving up.
 ```python
 EMAILHUB_SEND_MAX_RETRIES = 3
 ```
+
 
 ### EMAILHUB\_SEND\_HTML 
 

@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
+from emailhub.conf import settings as emailhub_settings
 from emailhub.models import EmailMessage, EmailTemplate
 
 
@@ -36,22 +37,28 @@ class EmailMessageAdmin(admin.ModelAdmin):
     )
 admin.site.register(EmailMessage, EmailMessageAdmin)
 
+if emailhub_settings.DRAFT_MODE is True:
+    tpl_list_filter = ('language', 'is_auto_send')
+    tpl_list_display = (
+        'subject', 'slug', 'language', 'is_active', 'is_auto_send')
+    tpl_main_fields = (
+        'subject', 'slug', 'email_from', 'language', 'signature',
+        'is_auto_send')
+else:
+    tpl_list_filter = ('language')
+    tpl_list_display = (
+        'subject', 'slug', 'language', 'is_active')
+    tpl_main_fields = (
+        'subject', 'slug', 'email_from', 'language', 'signature')
+
 
 class EmailTemplateAdmin(admin.ModelAdmin):
-    list_display = (
-        'subject', 'slug', 'language', 'is_active', 'is_auto_send')
-    list_filter = ('language', 'is_auto_send')
+    list_display = tpl_list_display
+    list_filter = tpl_list_display
     ordering = ('slug', 'language')
     search_fields = ('slug', 'subject', 'text_content')
     fieldsets = (
-        (None, {'fields': (
-            'subject',
-            'slug',
-            'email_from',
-            'language',
-            'signature',
-            'is_auto_send',
-        )}),
+        (None, {'fields': tpl_main_fields}),
         (_('Text'), {
             'fields': (
                 'text_content',

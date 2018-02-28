@@ -108,12 +108,21 @@ EMAILHUB_SEND_MAX_RETRIES = 3
 ```
 
 
-### EMAILHUB\_SEND\_HTML 
+### EMAILHUB\_SEND\_HTML
 
 Send also the HTML version with the text version of the email body (multi-parts)
 
 ```python
 EMAILHUB_SEND_HTML = True
+```
+
+
+### EMAILHUB\_DRAFT\_MODE
+
+Activate or deactivate draft mode.
+
+```python
+EMAILHUB_DRAFT_MODE = True
 ```
 
 

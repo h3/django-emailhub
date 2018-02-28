@@ -14,3 +14,6 @@ SEND_MAX_RETRIES = getattr(settings, 'EMAILHUB_SEND_MAX_RETRIES', 3)
 
 # Send also the HTML version (multi-parts)
 SEND_HTML = getattr(settings, 'EMAILHUB_SEND_HTML', True)
+
+# Send also the HTML version (multi-parts)
+DRAFT_MODE = getattr(settings, 'EMAILHUB_DRAFT_MODE', True)

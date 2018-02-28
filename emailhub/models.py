@@ -14,6 +14,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 
+from emailhub.conf import settings as emailhub_settings
 from emailhub.utils.html import icon
 
 log = logging.getLogger('emailhub')
@@ -117,7 +118,10 @@ class EmailTemplate(models.Model):
     subject = models.CharField(_('Subject'), max_length=100)
     text_content = models.TextField(_('Text content'))
     html_content = models.TextField(_('HTML content'))
-    email_from = models.EmailField(_('Email from'), blank=True, null=True)
+    email_from = models.EmailField(
+        _('Email from'), blank=True, null=True,
+        help_text=_('Will be sent from "{}" if left blank.').format(
+            emailhub_settings.DEFAULT_FROM))
     is_active = models.BooleanField(_('Is active'), default=True)
     is_auto_send = models.BooleanField(
         _('Auto send'), default=False,

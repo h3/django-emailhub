@@ -1,3 +1,4 @@
+# Default email from
 EMAILHUB_DEFAULT_FROM = 'no-reply@domain.com'
 
 # Sleep N seconds between sending each batches

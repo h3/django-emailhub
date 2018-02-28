@@ -1,0 +1,31 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}{{ block.super }}
+{% include "admin/codemirror.inc.html" %}
+<script type="text/javascript">
+(function($){
+  var opts = {
+    lineNumbers: true,
+    jumpToLine: true,
+    tabSize: 2,
+    mode: 'django'
+  };
+  $(function(){
+    // Text (for variables highlighting)
+    CodeMirror.fromTextArea($('#id_text_content').get(0), opts);
+    // HTML
+    CodeMirror.fromTextArea($('#id_html_content').get(0), opts);
+  });
+})(jQuery || django.jQuery);
+</script>
+{% endblock %}
+<style>
+.CodeMirror {
+  margin-top: 18px;
+  height: 400px;
+  background: #fafafa;
+  border: 1px solid #ddd;
+}
+.cm-variable { color: #00a900; }
+.cm-property { color: #09649c; }
+</style>

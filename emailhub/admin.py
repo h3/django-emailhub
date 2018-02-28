@@ -45,9 +45,12 @@ class EmailTemplateAdmin(admin.ModelAdmin):
     search_fields = ('slug', 'subject', 'text_content')
     fieldsets = (
         (None, {'fields': (
-            ('subject', 'slug'),
-            ('email_from',),
-            ('language', 'signature', 'is_auto_send'),
+            'subject',
+            'slug',
+            'email_from',
+            'language',
+            'signature',
+            'is_auto_send',
         )}),
         (_('Text'), {
             'fields': (

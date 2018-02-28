@@ -27,7 +27,7 @@ class EmailMessage(models.Model):
     user = models.ForeignKey(User, blank=True, null=True)
     subject = models.TextField(_('Subject'))
     body_text = models.TextField(_('Body (text)'))
-    body_html = models.TextField(_('Body (html)'))
+    body_html = models.TextField(_('Body (html)'), blank=True, null=True)
     from_email = models.EmailField(_('From'))
     to_email = models.EmailField(_('To'))
     date_created = models.DateTimeField(_('Date created'), auto_now_add=True)
@@ -107,8 +107,24 @@ class EmailMessage(models.Model):
 
 
 @python_2_unicode_compatible
+class EmailSignature(models.Model):
+    slug = models.SlugField(_('Slug'), max_length=80, blank=False, null=False,
+                            unique=False)
+    language = models.CharField(_('Language'), max_length=6, default='en',
+                                choices=settings.LANGUAGES)
+    text_content = models.TextField(_('Text content'))
+    html_content = models.TextField(_('HTML content'), blank=True, null=True)
+
+    class Meta:
+        verbose_name = _('Email signature')
+        verbose_name_plural = _('Email signatures')
+        ordering = ['slug']
+
+
+@python_2_unicode_compatible
 class EmailTemplate(models.Model):
     SIGNATURE_CHOICES = (
+        ('none', _('No signature')),
         ('default', _('Default')),
     )
     language = models.CharField(_('Language'), max_length=6, default='en',

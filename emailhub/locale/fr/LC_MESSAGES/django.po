@@ -1,0 +1,196 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-28 02:15-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: admin.py:29
+msgid "Meta"
+msgstr ""
+
+#: admin.py:55
+msgid "Text"
+msgstr ""
+
+#: admin.py:60
+msgid "HTML"
+msgstr ""
+
+#: models.py:28 models.py:134
+msgid "Subject"
+msgstr ""
+
+#: models.py:29
+msgid "Body (text)"
+msgstr ""
+
+#: models.py:30
+msgid "Body (html)"
+msgstr ""
+
+#: models.py:31
+msgid "From"
+msgstr ""
+
+#: models.py:32
+msgid "To"
+msgstr ""
+
+#: models.py:33
+msgid "Date created"
+msgstr ""
+
+#: models.py:34
+msgid "Date modified"
+msgstr ""
+
+#: models.py:35
+msgid "Date sent"
+msgstr ""
+
+#: models.py:36
+msgid "Is sent"
+msgstr ""
+
+#: models.py:37
+msgid "Is error"
+msgstr ""
+
+#: models.py:38
+msgid "Send retries"
+msgstr ""
+
+#: models.py:39
+msgid "Send error message"
+msgstr ""
+
+#: models.py:41
+msgid "Send error code"
+msgstr ""
+
+#: models.py:43
+msgid "From template"
+msgstr ""
+
+#: models.py:46
+msgid "Is draft"
+msgstr ""
+
+#: models.py:47
+msgid "Message marked as draft will not be sent"
+msgstr ""
+
+#: models.py:49
+msgid "Is locked"
+msgstr ""
+
+#: models.py:50
+msgid "Message marked as locked is being processed"
+msgstr ""
+
+#: models.py:64
+msgid "Error"
+msgstr ""
+
+#: models.py:66
+msgid "Sent"
+msgstr ""
+
+#: models.py:68
+msgid "Sending"
+msgstr ""
+
+#: models.py:70
+msgid "Draft"
+msgstr ""
+
+#: models.py:104
+msgid "Email message"
+msgstr ""
+
+#: models.py:105
+msgid "Email messages"
+msgstr ""
+
+#: models.py:111 models.py:132
+msgid "Slug"
+msgstr ""
+
+#: models.py:113 models.py:130
+msgid "Language"
+msgstr ""
+
+#: models.py:115 models.py:135
+msgid "Text content"
+msgstr ""
+
+#: models.py:116 models.py:136
+msgid "HTML content"
+msgstr ""
+
+#: models.py:119
+msgid "Email signature"
+msgstr ""
+
+#: models.py:120
+msgid "Email signatures"
+msgstr ""
+
+#: models.py:127
+msgid "No signature"
+msgstr ""
+
+#: models.py:128
+msgid "Default"
+msgstr ""
+
+#: models.py:138
+msgid "Email from"
+msgstr ""
+
+#: models.py:139
+msgid "Will be sent from \"{}\" if left blank."
+msgstr ""
+
+#: models.py:141
+msgid "Is active"
+msgstr ""
+
+#: models.py:143
+msgid "Auto send"
+msgstr ""
+
+#: models.py:144
+msgid "If checked, email will be sent without going through a \"draft\" state."
+msgstr ""
+
+#: models.py:145
+msgid "Signature"
+msgstr ""
+
+#: models.py:152
+msgid "Email template"
+msgstr ""
+
+#: models.py:153
+msgid "Email templates"
+msgstr ""
+
+#: utils/email.py:155
+#, python-brace-format
+msgid "Hello {civil_title} {fullname},"
+msgstr ""

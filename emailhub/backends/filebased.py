@@ -1,11 +1,9 @@
-import logging
-
 from django.core.mail.backends.filebased import FileBasedEmailBackend
 
-log = logging.getLogger('emailhub')
+from emailhub.utils.email import process_outgoing_email
 
 
 class EmailBackend(FileBasedEmailBackend):
     def write_message(self, message):
-        log.debug(message)
+        process_outgoing_email(message)
         super(EmailBackend, self).write_message(message)

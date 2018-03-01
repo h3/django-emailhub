@@ -138,6 +138,39 @@ EMAILHUB_DRAFT_MODE = True
 ```
 
 
+### EMAILHUB\_PRELOADED\_TEMPLATE\_TAGS
+
+These template tags will be preloaded for email templates rendering.
+
+```python
+EMAILHUB_PRELOADED_TEMPLATE_TAGS = ['i18n']
+```
+
+### EMAILHUB\_TEXT\_TEMPLATE
+
+Template used to render text email templates
+
+```python
+EMAILHUB_TEXT_TEMPLATE = """{{% load {template_tags} %}}{content}"""
+```
+
+### EMAILHUB\_HTML\_TEMPLATE
+
+Template used to render HTML email templates
+
+```python
+EMAILHUB_TEXT_TEMPLATE = """
+{{% load {template_tags} %}}
+{{% language lang|default:"en" %}}
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+  <head><meta charset="utf-8"></head>
+  <body>{content}</body>
+</html>
+"""
+```
+
+
 ## Backends
 
 In order to be able to log all outgoing emails, not just those sent from

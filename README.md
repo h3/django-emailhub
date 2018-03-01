@@ -6,6 +6,17 @@ send the output by email.
 **Note**: Work in progress.
 
 
+## Installation
+
+
+```python
+INSTALLED_APPS = [
+    'multi_email_field',
+    'emailhub',
+]
+```
+
+
 ## Features
 
 ### Inboxes
@@ -67,6 +78,7 @@ Email templates are can be defined in the admin. They support:
 ### Signature templates
 
 Email templates can (or not) use signature templates defined in the admin.
+
 
 
 ## Settings

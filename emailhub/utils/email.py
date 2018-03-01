@@ -18,6 +18,7 @@ from django.utils import six
 
 from emailhub.models import EmailMessage, EmailTemplate
 from emailhub.utils.formats import format_lazy
+from emailhub.conf import settings as emailhub_settings
 
 log = logging.getLogger('emailhub')
 
@@ -40,13 +41,13 @@ def send_email(msg):
     if msg.is_error:
         msg.send_retries += 1
 
-    max_retries = settings.EMAILHUB_SEND_MAX_RETRIES
+    max_retries = emailhub_settings.SEND_MAX_RETRIES
     if msg.send_retries > max_retries:
         msg.is_error = True
         msg.is_sent = False
         msg.send_error_message = 'Max retries reached ({})'.format(max_retries)
         log.debug('Not seding email (max retry of {} reached)'.format(
-            settings.EMAILHUB_SEND_MAX_RETRIES))
+            emailhub_settings.SEND_MAX_RETRIES))
     else:
         email.debug = True
         try:
@@ -82,19 +83,19 @@ def send_unsent_emails():
     log.debug('Sending unsent emails')
     unsent_emails = EmailMessage.objects.filter(
         is_sent=False, is_draft=False, is_locked=False,
-        send_retries__lte=settings.EMAILHUB_SEND_MAX_RETRIES
-    )[:settings.EMAILHUB_SEND_BATCH_SIZE]
+        send_retries__lte=emailhub_settings.SEND_MAX_RETRIES
+    )[:emailhub_settings.SEND_BATCH_SIZE]
     unset_email_ids = [unsent_email.id for unsent_email in unsent_emails]
     EmailMessage.objects.filter(id__in=unset_email_ids).update(is_locked=True)
     batch = 0
     for msg in unsent_emails:
         batch += 1
         # flood control
-        if batch == settings.EMAILHUB_SEND_BATCH_SIZE:
+        if batch == emailhub_settings.SEND_BATCH_SIZE:
             log.debug('Sleeping for {} seconds'.format(
-                settings.EMAILHUB_SEND_BATCH_SLEEP))
+                emailhub_settings.SEND_BATCH_SLEEP))
             batch = 0
-            time.sleep(settings.EMAILHUB_SEND_BATCH_SLEEP)
+            time.sleep(emailhub_settings.SEND_BATCH_SLEEP)
         send_email(msg)
     EmailMessage.objects.filter(id__in=unset_email_ids).update(is_locked=False)
 
@@ -137,43 +138,14 @@ class EmailFromTemplate(object):
     def get_context(self):
         context = {
             'email': {},
-            'base_url': settings.BASE_URL,
+            # 'base_url': settings.BASE_URL,
             'lang': self.language,
         }
 
-        header_html = get_template('configurations/email/header.html')
-        footer_txt = get_template('configurations/email/footer.txt')
-        footer_html = get_template('configurations/email/footer.html')
-        header_txt = get_template('configurations/email/header.txt')
-
         if hasattr(self, 'user'):
             context.update({'user': self.user})
-            # it is here we'll add missing fields
-            if hasattr(self.user, 'customerprofile'):
-                self.customer = self.user.customerprofile
-                salutations = format_lazy(
-                    _('Hello {civil_title} {fullname},'),
-                    **{
-                        'civil_title': self.customer.civil_title,
-                        'fullname': self.user.get_full_name()
-                    })
-                context.update({
-                    'customer': self.customer,
-                    'salutations': salutations,
-                })
+
         context.update(self.extra_context)
-        context.update({
-            'email': {
-                'header': {
-                    'html': header_html.render(Context(context)),
-                    'txt': header_txt.render(Context(context)),
-                },
-                'footer': {
-                    'txt': footer_txt.render(Context(context)),
-                    'html': footer_html.render(Context(context)),
-                }
-            }
-        })
         return context
 
     def render(self, content, context):
@@ -192,6 +164,7 @@ class EmailFromTemplate(object):
         """
         self.user = user
         if self.language is None:
+            # TODO: this is wrong assumption
             self.language = self.user.userprofile.language
         tpl = self.get_template()
         if tpl is None:
@@ -199,32 +172,30 @@ class EmailFromTemplate(object):
                 'COULD NOT CREATE EMAIL: Missing %s email template for %s' % (
                     dict(settings.LANGUAGES).get(self.language), self.slug))
         else:
-            send_from = tpl.email_from or settings.EMAILHUB_DEFAULT_FROM
+            send_from = tpl.email_from or emailhub_settings.DEFAULT_FROM
             self.extra_context.update({
                 'signature': tpl.signature
             })
             ctx = self.get_context()
             kw = {
                 'from_email': send_from,
-                'to_email': self.user.email,
-                'is_sent': False,
-                'is_error': False,
+                'to': self.user.email,
                 'subject': tpl.subject,
                 'user_id': self.user.pk,
             }
             if tpl.text_content:
-                kw['body_text'] = self.render(tpl.text_content, ctx)
+                kw['body_text'] = emailhub_settings.TEXT_TEMPLATE.format(
+                    content=self.render(tpl.text_content, ctx))
             if tpl.text_content:
-                kw['body_html'] = self.render(tpl.html_content, ctx)
+                kw['body_html'] = emailhub_settings.HTML_TEMPLATE.format(
+                    content=self.render(tpl.html_content, ctx),
+                    template_tags='i18n')
 
             msg = EmailMessage(**kw)
             msg.from_template = self.slug
             msg.is_draft = self.is_draft
             if tpl.is_auto_send:
                 msg.is_draft = False
-                # Do not send disabled email notifications
-                if user.is_customer and self.slug in user.customerprofile.email_config:  # noqa
-                    msg.is_draft = True
             msg.save()
 
             # Email are now sent with a cron job
@@ -276,7 +247,7 @@ class SystemEmailFromTemplate(EmailFromTemplate):
                     dict(settings.LANGUAGES).get(self.language), self.slug))
         else:
             kw = {
-                'from_email': settings.EMAILHUB_DEFAULT_FROM,
+                'from_email': emailhub_settings.DEFAULT_FROM,
                 'to_email': to_email,
                 'is_sent': False,
                 'is_error': False,
@@ -311,3 +282,7 @@ def get_template_choices(lang):
             unique_slugs.add(v['slug'])
 
     return unique_choices
+
+
+def process_outgoing_email(message):
+    pass

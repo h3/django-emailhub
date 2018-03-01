@@ -17,6 +17,8 @@ from django.utils.encoding import python_2_unicode_compatible
 from emailhub.conf import settings as emailhub_settings
 from emailhub.utils.html import icon
 
+from multi_email_field.fields import MultiEmailField
+
 log = logging.getLogger('emailhub')
 User = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
@@ -24,12 +26,14 @@ User = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 @python_2_unicode_compatible
 class EmailMessage(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, blank=True, null=True)
+    users = models.ManyToManyField(User, related_name='emailhub')
     subject = models.TextField(_('Subject'))
     body_text = models.TextField(_('Body (text)'))
     body_html = models.TextField(_('Body (HTML)'), blank=True, null=True)
     from_email = models.EmailField(_('From'))
-    to_email = models.EmailField(_('To'))
+    to = models.EmailField(_('To'))
+    cc = MultiEmailField(_('C.C.'), blank=True, null=True)
+    bcc = MultiEmailField(_('B.C.C.'), blank=True, null=True)
     date_created = models.DateTimeField(_('Date created'), auto_now_add=True)
     date_modified = models.DateTimeField(_('Date modified'), auto_now=True)
     date_sent = models.DateTimeField(_('Date sent'), blank=True, null=True)

@@ -23,7 +23,9 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=True,
-    install_requires=[],
+    install_requires=[
+        'django-multi-email-field==0.5.1',
+    ],
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',

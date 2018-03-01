@@ -85,13 +85,8 @@ class EmailMessage(models.Model):
         return mark_safe(_tpl.format(**_kwargs))
 
     def get_absolute_url(self):
-        if not self.customer:
-            return reverse('admin:messaging_emailmessage_change',
-                           args=[self.pk])
-        elif self.is_draft:
-            return self.get_change_url()
-        else:
-            return self.get_detail_url()
+        return reverse('admin:messaging_emailmessage_change',
+                        args=[self.pk])
 
     def save(self, *args, **kwargs):
         # force remove new lines & spaces from begining and end of the message
@@ -99,10 +94,7 @@ class EmailMessage(models.Model):
         return super(EmailMessage, self).save(*args, **kwargs)
 
     def __str__(self):
-        if self.customer:
-            return '"%s" <%s> %s' % (self.customer, self.to_email, self.subject)
-        else:
-            return '<%s> %s' % (self.to_email, self.subject)
+            return '<%s> %s' % (self.to, self.subject)
 
     class Meta:
         verbose_name = _('Email message')

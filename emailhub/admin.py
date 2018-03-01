@@ -10,7 +10,7 @@ from emailhub.models import EmailMessage, EmailTemplate
 
 
 class EmailMessageAdmin(admin.ModelAdmin):
-    list_display = ('subject', 'usrs', 'dest', 'date_sent',
+    list_display = ('subject', 'usrs', 'to', 'date_sent',
                     'is_locked', 'is_sent', 'is_error', 'date_created')
     readonly_fields = ('uuid', 'users', 'date_sent', 'is_sent', 'from_email',
                        'date_created', 'date_modified')
@@ -38,10 +38,8 @@ class EmailMessageAdmin(admin.ModelAdmin):
     )
 
     def usrs(self, obj):
-        return ', '.join(obj.users)
+        return ', '.join(['{}'.format(u.pk) for u in obj.users.all()])
 
-    def dest(self, obj):
-        return ', '.join(obj.to)
 admin.site.register(EmailMessage, EmailMessageAdmin)
 
 if emailhub_settings.DRAFT_MODE is True:

@@ -12,20 +12,20 @@ from django.conf import settings
 from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
 from django.core.mail import EmailMessage as CreateEmailMessage
-from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth import get_user_model
 from django.template import Context, Template
 from django.utils import six
 
 from emailhub.models import EmailMessage, EmailTemplate
-from emailhub.utils.formats import format_lazy
 from emailhub.conf import settings as emailhub_settings
 
 log = logging.getLogger('emailhub')
+User = get_user_model()
 
 
 def send_email(msg):
-    to = [msg.to_email]
-    kwargs = {'headers': {'X-LW-UUID': msg.uuid}}
+    to = [msg.to]
+    kwargs = {'headers': {'X-EmailHub-UUID': msg.uuid}}
 
     if msg.body_html:
         args = [msg.subject, msg.body_text, msg.from_email, to]
@@ -56,7 +56,7 @@ def send_email(msg):
             msg.is_sent = True
             msg.date_sent = datetime.now()
             log.debug('EMAIL SENT > "{}" to {}'.format(
-                six.text_type(msg.subject), msg.to_email))
+                six.text_type(msg.subject), msg.to))
         except SMTPDataError as e:
             code, error = e
             msg.send_error_code = e.smtp_code
@@ -65,7 +65,7 @@ def send_email(msg):
             msg.is_sent = False
             msg.date_sent = None
             log.debug('EMAIL SMTP ERROR > "{}" to {} ({})'.format(
-                six.text_type(msg.subject), msg.to_email, msg))
+                six.text_type(msg.subject), msg.to, msg))
             log.error(six.text_type(e))
         except Exception as e:
             msg.send_error_message = e.message
@@ -73,7 +73,7 @@ def send_email(msg):
             msg.is_sent = False
             msg.date_sent = None
             log.debug('EMAIL ERROR > "{}" to {} ({})'.format(
-                six.text_type(msg.subject), msg.to_email, msg))
+                six.text_type(msg.subject), msg.to, msg))
             log.error(six.text_type(e))
     msg.save()
     return msg
@@ -109,7 +109,7 @@ class EmailFromTemplate(object):
         self.slug = slug
         self.language = lang
         self.is_draft = is_draft
-        self.extra_context = extra_context or {}
+        self.extra_context = extra_context
 
     def get_template(self):
         kw = {'slug': self.slug}
@@ -144,8 +144,8 @@ class EmailFromTemplate(object):
 
         if hasattr(self, 'user'):
             context.update({'user': self.user})
-
-        context.update(self.extra_context)
+        if self.extra_context:
+            context.update(self.extra_context)
         return context
 
     def render(self, content, context):
@@ -173,23 +173,24 @@ class EmailFromTemplate(object):
                     dict(settings.LANGUAGES).get(self.language), self.slug))
         else:
             send_from = tpl.email_from or emailhub_settings.DEFAULT_FROM
-            self.extra_context.update({
+            ctx = self.get_context()
+            ctx.update({
                 'signature': tpl.signature
             })
-            ctx = self.get_context()
             kw = {
                 'from_email': send_from,
                 'to': self.user.email,
                 'subject': tpl.subject,
-                'user_id': self.user.pk,
             }
+            tags = ' '.join(emailhub_settings.PRELOADED_TEMPLATE_TAGS)
             if tpl.text_content:
                 kw['body_text'] = emailhub_settings.TEXT_TEMPLATE.format(
-                    content=self.render(tpl.text_content, ctx))
+                    content=self.render(tpl.text_content, ctx),
+                    template_tags=tags)
             if tpl.text_content:
                 kw['body_html'] = emailhub_settings.HTML_TEMPLATE.format(
                     content=self.render(tpl.html_content, ctx),
-                    template_tags='i18n')
+                    template_tags=tags)
 
             msg = EmailMessage(**kw)
             msg.from_template = self.slug
@@ -197,6 +198,7 @@ class EmailFromTemplate(object):
             if tpl.is_auto_send:
                 msg.is_draft = False
             msg.save()
+            msg.users.add(self.user)
 
             # Email are now sent with a cron job
             # if not self.is_draft and force:
@@ -252,7 +254,6 @@ class SystemEmailFromTemplate(EmailFromTemplate):
                 'is_sent': False,
                 'is_error': False,
                 'subject': tpl.subject,
-                'customer_id': None,
             }
             if tpl.text_content:
                 kw['body_text'] = self.render(tpl.text_content, ctx)
@@ -285,4 +286,20 @@ def get_template_choices(lang):
 
 
 def process_outgoing_email(message):
-    pass
+    if 'X-EmailHub-UUID' not in message.extra_headers.keys():
+        for to in message.to:
+            kw = {
+                'to': to,
+                'from_email': message.from_email,
+                'subject': message.subject,
+                'body_text': message.body,
+                'is_draft': False,
+                'is_sent': True,
+            }
+            msg = EmailMessage(**kw)
+            msg.save()
+            dests = User.objects.filter(
+                email__in=message.recipients())
+            if dests.count():
+                for user in dests:
+                    msg.users.add(user)

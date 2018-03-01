@@ -159,7 +159,7 @@ EMAILHUB_TEXT_TEMPLATE = """{{% load {template_tags} %}}{content}"""
 Template used to render HTML email templates
 
 ```python
-EMAILHUB_TEXT_TEMPLATE = """
+EMAILHUB_HTML_TEMPLATE = """
 {{% load {template_tags} %}}
 {{% language lang|default:"en" %}}
 <!DOCTYPE html>

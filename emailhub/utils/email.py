@@ -296,6 +296,9 @@ def process_outgoing_email(message):
                 'is_draft': False,
                 'is_sent': True,
             }
+            if len(message.alternatives) and len(message.alternatives[0]):
+                kw['body_html'] = message.alternatives[0][0]
+
             msg = EmailMessage(**kw)
             msg.save()
             dests = User.objects.filter(

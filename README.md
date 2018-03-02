@@ -1,4 +1,4 @@
-# [PROJECT MOVED](https://gitlab.com/h3/django-emailhub)
+# PROJECT MOVED: [https://gitlab.com/h3/django-emailhub](https://gitlab.com/h3/django-emailhub)
 
 # django-emailhub
 

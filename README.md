@@ -1,3 +1,5 @@
+# [PROJECT MOVED](https://gitlab.com/h3/django-emailhub)
+
 # django-emailhub
 
 Django-emailhub tries to go a beyond interpolating variable in a template to

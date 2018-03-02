@@ -8,6 +8,7 @@ send the output by email.
 
 ## Installation
 
+Add `multi_email_field` and `emailhub` to your project's settings:
 
 ```python
 INSTALLED_APPS = [
@@ -16,6 +17,24 @@ INSTALLED_APPS = [
 ]
 ```
 
+**Note**: You don't need to add `multi_email_field` to your requirements,
+          emailhub will install it.
+
+Run migrations:
+
+```bash
+(venv)$ python manage.py migrate
+```
+
+## Python API
+
+
+```python
+from emailhub.utils.email import EmailFromTemplate, send_email
+
+msg = EmailFromTemplate('template-slug-name', lang='en',
+                        extra_context={'hello': 'world'}).send_to(user)
+```
 
 ## Features
 
